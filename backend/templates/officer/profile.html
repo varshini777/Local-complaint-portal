@@ -1,0 +1,5 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Officer Profile{% endblock %}
+{% block content %}
+<div class="card p-4"><h1 class="h4 mb-3">Profile</h1><form method="post">{{ form.hidden_tag() }}<div class="row g-3"><div class="col-md-6">{{ form.full_name.label(class="form-label") }}{{ form.full_name(class="form-control") }}</div><div class="col-md-6">{{ form.phone.label(class="form-label") }}{{ form.phone(class="form-control") }}</div></div>{{ form.submit(class="btn btn-primary mt-4") }} <a class="btn btn-outline-secondary mt-4" href="{{ url_for('officer.change_password') }}">Change Password</a></form></div>
+{% endblock %}

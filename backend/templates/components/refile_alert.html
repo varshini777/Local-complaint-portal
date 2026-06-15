@@ -1,0 +1,13 @@
+<div class="alert alert-warning d-flex align-items-start gap-2 mb-3" role="alert">
+  <i class="bi bi-exclamation-triangle-fill mt-1"></i>
+  <div>
+    <strong>No progress for {{ complaint.days_since_submitted }} days.</strong>
+    This complaint was registered on {{ complaint.submitted_at.strftime('%d %b %Y') }}.
+    If your issue is still unresolved, please file the complaint again.
+    <div class="mt-2">
+      <a class="btn btn-sm btn-warning" href="{{ url_for('citizen.submit_complaint') }}">
+        <i class="bi bi-plus-circle"></i> File Complaint Again
+      </a>
+    </div>
+  </div>
+</div>

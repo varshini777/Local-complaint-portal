@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Local Complaint Portal{% endblock %}
+{% block content %}
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center min-vh-100">
+      <div class="col-lg-6">
+        <div class="hero-content">
+          <h1 class="display-4 fw-bold mb-4">Local Complaint Portal</h1>
+          <p class="lead mb-4">Your voice matters. Report local issues, track progress, and help build a better community together.</p>
+          <div class="hero-features mb-4">
+            <div class="feature-item">
+              <i class="bi bi-check-circle-fill text-success"></i>
+              <span>Easy Complaint Submission</span>
+            </div>
+            <div class="feature-item">
+              <i class="bi bi-check-circle-fill text-success"></i>
+              <span>Real-time Status Tracking</span>
+            </div>
+            <div class="feature-item">
+              <i class="bi bi-check-circle-fill text-success"></i>
+              <span>Transparent Resolution Process</span>
+            </div>
+          </div>
+          <div class="hero-buttons">
+            {% if current_user.is_authenticated %}
+              {% if current_user.role == 'Citizen' %}
+              <a class="btn btn-primary btn-lg me-3" href="{{ url_for('citizen.dashboard') }}">
+                <i class="bi bi-speedometer2 me-2"></i>Go to Dashboard
+              </a>
+              <a class="btn btn-outline-light btn-lg" href="{{ url_for('citizen.submit_complaint') }}">
+                <i class="bi bi-plus-circle me-2"></i>Submit Complaint
+              </a>
+              {% elif current_user.role == 'Officer' %}
+              <a class="btn btn-primary btn-lg me-3" href="{{ url_for('officer.dashboard') }}">
+                <i class="bi bi-speedometer2 me-2"></i>Go to Dashboard
+              </a>
+              <a class="btn btn-outline-light btn-lg" href="{{ url_for('officer.assigned_complaints') }}">
+                <i class="bi bi-list-check me-2"></i>View Complaints
+              </a>
+              {% elif current_user.role == 'Admin' %}
+              <a class="btn btn-primary btn-lg me-3" href="{{ url_for('admin.dashboard') }}">
+                <i class="bi bi-speedometer2 me-2"></i>Go to Dashboard
+              </a>
+              <a class="btn btn-outline-light btn-lg" href="{{ url_for('admin.manage_complaints') }}">
+                <i class="bi bi-list-check me-2"></i>Manage Complaints
+              </a>
+              {% endif %}
+            {% else %}
+              <a class="btn btn-primary btn-lg me-3" href="{{ url_for('auth.login') }}">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+              </a>
+              <a class="btn btn-outline-light btn-lg" href="{{ url_for('auth.register') }}">
+                <i class="bi bi-person-plus me-2"></i>Register as Citizen
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="hero-image">
+          <div class="hero-card">
+            <div class="hero-card-icon">
+              <i class="bi bi-shield-check"></i>
+            </div>
+            <h3>Government Portal</h3>
+            <p>Official complaint management system for local governance</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

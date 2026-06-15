@@ -1,0 +1,25 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Submit Complaint{% endblock %}
+{% block content %}
+<div class="card p-4">
+  <h1 class="h4 mb-3">Submit Complaint</h1>
+  <form method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <div class="row g-3">
+      <div class="col-md-6">{{ form.title.label(class="form-label") }}{{ form.title(class="form-control") }}</div>
+      <div class="col-md-3">{{ form.category.label(class="form-label") }}{{ form.category(class="form-select") }}</div>
+      <div class="col-md-3">{{ form.priority.label(class="form-label") }}{{ form.priority(class="form-select") }}</div>
+      <div class="col-md-6">{{ form.ward.label(class="form-label") }}{{ form.ward(class="form-select") }}</div>
+      <div class="col-md-6">{{ form.location.label(class="form-label") }}{{ form.location(class="form-control") }}</div>
+      <div class="col-md-6">
+        <label class="form-label">Complaint Date</label>
+        <input type="text" class="form-control" value="{{ complaint_date.strftime('%d %b %Y') }}" readonly>
+        <div class="form-text">Your complaint will be registered on this date. If there is no progress within 7 days, please file the complaint again.</div>
+      </div>
+      <div class="col-12">{{ form.description.label(class="form-label") }}{{ form.description(class="form-control", rows="5") }}</div>
+      <div class="col-md-6">{{ form.before_image.label(class="form-label") }}{{ form.before_image(class="form-control") }}</div>
+    </div>
+    {{ form.submit(class="btn btn-primary mt-4") }}
+  </form>
+</div>
+{% endblock %}

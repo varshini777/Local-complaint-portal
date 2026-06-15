@@ -1,0 +1,17 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block back_button %}{% endblock %}
+{% block content %}
+<div class="page-header"><h1 class="h3">Admin Dashboard</h1></div>
+<div class="row row-cols-1 row-cols-md-4 g-3 mb-4">
+  {% with label="Users", value=total_users, icon="bi-people" %}{% include "components/stat_card.html" %}{% endwith %}
+  {% with label="Citizens", value=total_citizens, icon="bi-person" %}{% include "components/stat_card.html" %}{% endwith %}
+  {% with label="Officers", value=total_officers, icon="bi-person-badge" %}{% include "components/stat_card.html" %}{% endwith %}
+  {% with label="Complaints", value=total_complaints, icon="bi-list-check" %}{% include "components/stat_card.html" %}{% endwith %}
+  {% with label="Pending", value=pending_complaints, icon="bi-hourglass" %}{% include "components/stat_card.html" %}{% endwith %}
+  {% with label="Resolved", value=resolved_complaints, icon="bi-check-circle" %}{% include "components/stat_card.html" %}{% endwith %}
+  {% with label="Closed", value=closed_complaints, icon="bi-lock" %}{% include "components/stat_card.html" %}{% endwith %}
+  {% with label="Escalated", value=escalated_complaints, icon="bi-exclamation-triangle" %}{% include "components/stat_card.html" %}{% endwith %}
+</div>
+<div class="row g-3"><div class="col-lg-7"><div class="card p-3"><h2 class="h5">Recent Complaints</h2><table class="table"><tbody>{% for complaint in recent_complaints %}<tr><td><a href="{{ url_for('admin.view_complaint', complaint_id=complaint.complaint_id) }}">{{ complaint.complaint_number }}</a></td><td>{{ complaint.title }}</td><td><span class="badge badge-status-{{ complaint.status|replace(' ', '-') }}">{{ complaint.status }}</span></td></tr>{% else %}<tr><td class="text-muted">No complaints.</td></tr>{% endfor %}</tbody></table></div></div><div class="col-lg-5"><div class="card p-3"><h2 class="h5">Recent Users</h2><table class="table"><tbody>{% for user in recent_users %}<tr><td>{{ user.full_name }}</td><td>{{ user.role|title }}</td><td>{{ user.created_at.strftime('%d %b %Y') }}</td></tr>{% else %}<tr><td class="text-muted">No users.</td></tr>{% endfor %}</tbody></table></div></div></div>
+{% endblock %}

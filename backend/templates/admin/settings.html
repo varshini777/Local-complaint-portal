@@ -1,0 +1,5 @@
+{% extends "base_dashboard.html" %}
+{% block title %}System Settings{% endblock %}
+{% block content %}
+<div class="card p-4"><h1 class="h4 mb-3">System Settings</h1><form method="post">{{ form.hidden_tag() }}<div class="row g-3"><div class="col-md-4">{{ form.urgent_escalation_days.label(class="form-label") }}{{ form.urgent_escalation_days(class="form-control") }}</div><div class="col-md-4">{{ form.critical_escalation_days.label(class="form-label") }}{{ form.critical_escalation_days(class="form-control") }}</div><div class="col-md-4">{{ form.max_upload_size_mb.label(class="form-label") }}{{ form.max_upload_size_mb(class="form-control") }}</div></div>{{ form.submit(class="btn btn-primary mt-4") }}</form></div>
+{% endblock %}

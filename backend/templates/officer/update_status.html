@@ -1,0 +1,5 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Update Complaint{% endblock %}
+{% block content %}
+<div class="card p-4"><h1 class="h4 mb-3">{{ complaint.complaint_number }} - {{ complaint.title }}</h1><form method="post" enctype="multipart/form-data">{{ form.hidden_tag() }}{% for field in form if field.type not in ["CSRFTokenField", "SubmitField"] %}<div class="mb-3">{{ field.label(class="form-label") }}{% if field.type == "SelectField" %}{{ field(class="form-select") }}{% elif field.type == "TextAreaField" %}{{ field(class="form-control", rows="4") }}{% else %}{{ field(class="form-control") }}{% endif %}{% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>{% endfor %}{{ form.submit(class="btn btn-primary") }}</form></div>
+{% endblock %}

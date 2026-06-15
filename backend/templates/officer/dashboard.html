@@ -1,0 +1,14 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Officer Dashboard{% endblock %}
+{% block back_button %}{% endblock %}
+{% block content %}
+<div class="page-header"><h1 class="h3">Officer Dashboard</h1></div>
+<div class="row row-cols-1 row-cols-md-5 g-3 mb-4">
+  {% with label="Assigned", value=total_assigned, icon="bi-clipboard-check" %}{% include "components/stat_card.html" %}{% endwith %}
+  {% with label="Pending", value=pending_complaints, icon="bi-hourglass" %}{% include "components/stat_card.html" %}{% endwith %}
+  {% with label="In Progress", value=in_progress_complaints, icon="bi-arrow-repeat" %}{% include "components/stat_card.html" %}{% endwith %}
+  {% with label="Resolved", value=resolved_complaints, icon="bi-check-circle" %}{% include "components/stat_card.html" %}{% endwith %}
+  {% with label="Avg Hours", value=average_resolution_hours, icon="bi-stopwatch" %}{% include "components/stat_card.html" %}{% endwith %}
+</div>
+<div class="card p-3"><h2 class="h5">Recent Assigned Complaints</h2><div class="table-responsive"><table class="table align-middle"><thead><tr><th>No.</th><th>Title</th><th>Status</th><th>Registered On</th></tr></thead><tbody>{% for complaint in recent_assigned_complaints %}<tr><td><a href="{{ url_for('officer.complaint_detail', complaint_id=complaint.complaint_id) }}">{{ complaint.complaint_number }}</a></td><td>{{ complaint.title }}</td><td><span class="badge badge-status-{{ complaint.status|replace(' ', '-') }}">{{ complaint.status }}</span></td><td>{{ complaint.submitted_at.strftime('%d %b %Y') }}</td></tr>{% else %}<tr><td colspan="4" class="text-muted">No assigned complaints.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

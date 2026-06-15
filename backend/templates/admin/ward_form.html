@@ -1,0 +1,5 @@
+{% extends "base_dashboard.html" %}
+{% block title %}{{ action }} Ward{% endblock %}
+{% block content %}
+<div class="card p-4"><h1 class="h4 mb-3">{{ action }} Ward</h1><form method="post">{{ form.hidden_tag() }}<div class="row g-3"><div class="col-md-4">{{ form.ward_name.label(class="form-label") }}{{ form.ward_name(class="form-control") }}</div><div class="col-md-4">{{ form.ward_code.label(class="form-label") }}{{ form.ward_code(class="form-control") }}</div><div class="col-md-4">{{ form.assigned_officer_id.label(class="form-label") }}{{ form.assigned_officer_id(class="form-select") }}</div><div class="col-12 form-check ms-2">{{ form.is_active(class="form-check-input") }}{{ form.is_active.label(class="form-check-label") }}</div></div>{{ form.submit(class="btn btn-primary mt-4") }}</form></div>
+{% endblock %}

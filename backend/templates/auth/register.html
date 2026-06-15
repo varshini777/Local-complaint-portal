@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Citizen Registration{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-xl-8">
+    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-sm mb-3"><i class="bi bi-arrow-left"></i> Back to Home</a>
+    <div class="card p-4">
+      <h1 class="h4 mb-3">Citizen Registration</h1>
+      <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="row g-3">
+          {% for field in [form.full_name, form.email, form.phone, form.password, form.confirm_password, form.security_question, form.security_answer] %}
+            <div class="col-md-6">
+              {{ field.label(class="form-label") }}
+              {{ field(class="form-control") }}
+              {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+        {{ form.submit(class="btn btn-primary mt-4") }}
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

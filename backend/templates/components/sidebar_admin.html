@@ -1,0 +1,8 @@
+<a href="{{ url_for('index') }}"><i class="bi bi-house"></i>Home</a>
+<a href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2"></i>Dashboard</a>
+<a href="{{ url_for('admin.manage_complaints') }}"><i class="bi bi-list-check"></i>Complaints</a>
+<a href="{{ url_for('admin.manage_users') }}"><i class="bi bi-people"></i>Users</a>
+<a href="{{ url_for('admin.manage_users', role='Officer') }}"><i class="bi bi-person-badge"></i>Officers</a>
+<a href="{{ url_for('admin.manage_wards') }}"><i class="bi bi-geo-alt"></i>Wards</a>
+<a href="{{ url_for('admin.activity_logs') }}"><i class="bi bi-clock-history"></i>Activity Logs</a>
+<a href="{{ url_for('admin.manage_settings') }}"><i class="bi bi-gear"></i>Settings</a>

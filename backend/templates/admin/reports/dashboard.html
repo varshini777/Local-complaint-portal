@@ -1,0 +1,32 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Reports Dashboard{% endblock %}
+{% block content %}
+<div class="page-header"><h1 class="h3">Reports Dashboard</h1><div><a class="btn btn-outline-primary" href="{{ url_for('reports.export_complaints') }}">Complaints CSV</a><a class="btn btn-outline-primary" href="{{ url_for('reports.export_officers') }}">Officers CSV</a><a class="btn btn-outline-primary" href="{{ url_for('reports.export_feedback') }}">Feedback CSV</a></div></div>
+<div class="row row-cols-1 row-cols-md-4 g-3 mb-4">{% for key, value in dashboard_metrics.items() %}{% with label=key|replace('_',' ')|title, value=value, icon="bi-bar-chart" %}{% include "components/stat_card.html" %}{% endwith %}{% endfor %}</div>
+<div class="row g-3">
+  {% for chart_id, title in [("categoryChart","Category Distribution"),("wardChart","Ward Analytics"),("officerChart","Officer Performance"),("escalationChart","Escalation Analytics"),("monthlyChart","Monthly Trends"),("agingChart","Complaint Aging"),("feedbackChart","Feedback Ratings")] %}
+  <div class="col-lg-6"><div class="card p-3"><h2 class="h5">{{ title }}</h2><div style="height:300px"><canvas id="{{ chart_id }}"></canvas></div></div></div>
+  {% endfor %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script>
+const categoryData = {{ category_analytics|tojson }};
+const wardData = {{ ward_analytics|tojson }};
+const officerData = {{ officer_performance|tojson }};
+const escalationData = {{ escalation_analytics|tojson }};
+const monthlyData = {{ monthly_trends|tojson }};
+const agingData = {{ complaint_aging|tojson }};
+const feedbackData = {{ feedback_analytics|tojson }};
+function labels(obj){ return Array.isArray(obj) ? obj.map(x => x.label || x.name || x.category || x.month || x.ward || x.ward_name || x.officer || x.officer_name || x.rating) : Object.keys(obj || {}); }
+function values(obj){ return Array.isArray(obj) ? obj.map(x => x.value || x.count || x.total || x.total_count || x.resolved || x.resolved_count || 0) : Object.values(obj || {}); }
+portalChart("categoryChart", "doughnut", labels(categoryData), values(categoryData), "Categories");
+portalChart("wardChart", "bar", labels(wardData), values(wardData), "Wards");
+portalChart("officerChart", "bar", labels(officerData), values(officerData), "Officers");
+portalChart("escalationChart", "pie", labels(escalationData), values(escalationData), "Escalation");
+portalChart("monthlyChart", "line", labels(monthlyData), values(monthlyData), "Monthly");
+portalChart("agingChart", "bar", labels(agingData), values(agingData), "Aging");
+portalChart("feedbackChart", "bar", labels(feedbackData), values(feedbackData), "Feedback");
+</script>
+{% endblock %}

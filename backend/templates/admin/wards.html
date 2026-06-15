@@ -1,0 +1,6 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Wards{% endblock %}
+{% block content %}
+<div class="page-header"><h1 class="h3">Wards</h1><a class="btn btn-primary" href="{{ url_for('admin.create_ward') }}">Create Ward</a></div>
+<div class="card p-3 table-responsive"><table class="table align-middle"><thead><tr><th>Name</th><th>Code</th><th>Officer</th><th>Status</th><th></th></tr></thead><tbody>{% for ward in wards.items %}<tr><td>{{ ward.ward_name }}</td><td>{{ ward.ward_code }}</td><td>{{ ward.assigned_officer.full_name if ward.assigned_officer else 'Unassigned' }}</td><td>{% if ward.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}</td><td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.edit_ward', ward_id=ward.ward_id) }}">Edit</a><form class="d-inline" method="post" action="{{ url_for('admin.toggle_ward_status', ward_id=ward.ward_id) }}"><button class="btn btn-sm btn-outline-warning">Toggle</button></form></td></tr>{% else %}<tr><td colspan="5" class="text-muted">No wards found.</td></tr>{% endfor %}</tbody></table>{% set pagination = wards %}{% include "components/pagination.html" %}</div>
+{% endblock %}

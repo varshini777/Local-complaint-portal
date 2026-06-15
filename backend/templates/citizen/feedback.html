@@ -1,0 +1,67 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Feedback{% endblock %}
+
+{% block content %}
+<div class="card p-4">
+  <h1 class="h4 mb-3">Submit Feedback</h1>
+  <p class="text-muted mb-4">Please rate your experience with the complaint resolution process.</p>
+  <form method="post">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+      {{ form.rating.label(class="form-label") }}
+      <div class="rating-stars">
+        {% for i in range(1, 6) %}
+        <input type="radio" name="rating" id="star{{ i }}" value="{{ i }}" class="d-none" {% if form.rating.data == i %}checked{% endif %}>
+        <label for="star{{ i }}" class="star-label {% if form.rating.data and form.rating.data >= i %}active{% endif %}">★</label>
+        {% endfor %}
+      </div>
+      {% for error in form.rating.errors %}
+      <div class="text-danger small">{{ error }}</div>
+      {% endfor %}
+    </div>
+    <div class="mb-3">
+      {{ form.comment.label(class="form-label") }}
+      {{ form.comment(class="form-control", rows="4", placeholder="Share your experience (optional)") }}
+      {% for error in form.comment.errors %}
+      <div class="text-danger small">{{ error }}</div>
+      {% endfor %}
+    </div>
+    {{ form.submit(class="btn btn-primary") }}
+    <a class="btn btn-outline-secondary" href="{{ url_for('citizen.complaint_history') }}">Cancel</a>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.rating-stars {
+  display: flex;
+  gap: 5px;
+}
+.star-label {
+  font-size: 2rem;
+  color: #ddd;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.star-label:hover,
+.star-label.active {
+  color: #ffc107;
+}
+</style>
+<script>
+document.querySelectorAll('.star-label').forEach(label => {
+  label.addEventListener('click', function() {
+    const value = this.previousElementSibling.value;
+    document.querySelectorAll('.star-label').forEach((l, i) => {
+      if (i < value) {
+        l.classList.add('active');
+      } else {
+        l.classList.remove('active');
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

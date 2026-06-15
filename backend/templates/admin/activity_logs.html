@@ -1,0 +1,7 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Activity Logs{% endblock %}
+{% block content %}
+<div class="page-header"><h1 class="h3">Activity Logs</h1></div>
+<div class="filter-panel"><form class="row g-2" method="get"><div class="col-md-4">{{ form.user_id(class="form-select") }}</div><div class="col-md-4">{{ form.action(class="form-control", placeholder="Action") }}</div><div class="col-md-2">{{ form.date(class="form-control") }}</div><div class="col-md-2">{{ form.submit(class="btn btn-primary w-100") }}</div></form></div>
+<div class="card p-3 table-responsive"><table class="table align-middle"><thead><tr><th>User</th><th>Action</th><th>IP</th><th>Details</th><th>Date</th></tr></thead><tbody>{% for log in logs.items %}<tr><td>{{ log.actor_name }}</td><td>{{ log.action }}</td><td>{{ log.ip_address }}</td><td>{{ log.details }}</td><td>{{ log.created_at.strftime('%d %b %Y %I:%M %p') }}</td></tr>{% else %}<tr><td colspan="5" class="text-muted">No logs found.</td></tr>{% endfor %}</tbody></table>{% set pagination = logs %}{% include "components/pagination.html" %}</div>
+{% endblock %}

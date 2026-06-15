@@ -1,0 +1,46 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Citizen Dashboard{% endblock %}
+{% block back_button %}{% endblock %}
+{% block content %}
+<div class="page-header"><h1 class="h3">Citizen Dashboard</h1><a class="btn btn-primary" href="{{ url_for('citizen.submit_complaint') }}">Submit Complaint</a></div>
+
+{% if stale_complaints %}
+<div class="card p-3 mb-3 border-warning">
+  <h2 class="h6 text-warning"><i class="bi bi-exclamation-triangle"></i> Action Required</h2>
+  <p class="text-muted mb-2">The following complaints have had no progress for 7 or more days. Please file them again if the issue is still unresolved.</p>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle mb-0">
+      <thead><tr><th>Complaint No.</th><th>Title</th><th>Registered On</th><th>Days Waiting</th><th></th></tr></thead>
+      <tbody>
+        {% for complaint in stale_complaints %}
+        <tr>
+          <td><a href="{{ url_for('citizen.complaint_detail', complaint_id=complaint.complaint_id) }}">{{ complaint.complaint_number }}</a></td>
+          <td>{{ complaint.title }}</td>
+          <td>{{ complaint.submitted_at.strftime('%d %b %Y') }}</td>
+          <td><span class="badge bg-warning text-dark">{{ complaint.days_since_submitted }} days</span></td>
+          <td><a class="btn btn-sm btn-warning" href="{{ url_for('citizen.submit_complaint') }}">File Again</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<div class="row row-cols-1 row-cols-md-4 g-3 mb-4">
+  {% with label="Total Complaints", value=total_complaints, icon="bi-folder" %}{% include "components/stat_card.html" %}{% endwith %}
+  {% with label="Pending", value=pending_complaints, icon="bi-hourglass-split" %}{% include "components/stat_card.html" %}{% endwith %}
+  {% with label="Resolved", value=resolved_complaints, icon="bi-check-circle" %}{% include "components/stat_card.html" %}{% endwith %}
+  {% with label="Closed", value=closed_complaints, icon="bi-lock" %}{% include "components/stat_card.html" %}{% endwith %}
+</div>
+<div class="card p-3"><h2 class="h5">Recent Complaints</h2>
+  <div class="table-responsive"><table class="table align-middle">
+    <thead><tr><th>No.</th><th>Title</th><th>Status</th><th>Priority</th><th>Registered On</th></tr></thead>
+    <tbody>{% for complaint in recent_complaints %}<tr>
+      <td><a href="{{ url_for('citizen.complaint_detail', complaint_id=complaint.complaint_id) }}">{{ complaint.complaint_number }}</a></td>
+      <td>{{ complaint.title }}</td><td><span class="badge badge-status-{{ complaint.status|replace(' ', '-') }}">{{ complaint.status }}</span></td>
+      <td><span class="badge badge-priority-{{ complaint.priority }}">{{ complaint.priority }}</span></td><td>{{ complaint.submitted_at.strftime('%d %b %Y') }}</td>
+    </tr>{% else %}<tr><td colspan="5" class="text-muted">No complaints submitted yet.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+{% endblock %}
