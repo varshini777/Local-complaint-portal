@@ -1,5 +1,7 @@
+from sqlalchemy.orm import joinedload
 from flask import Blueprint, flash, redirect, render_template, request, url_for, abort
 from flask import current_app as app
+from flask_login import current_user
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime, timezone
@@ -276,7 +278,7 @@ def toggle_ward_status(ward_id):
 @admin_required
 def manage_complaints():
     form = AdminComplaintFilterForm(request.args)
-    query = Complaint.query
+    query = Complaint.query.options(joinedload(Complaint.category), joinedload(Complaint.ward), joinedload(Complaint.assigned_officer))
     
     if form.search_term.data:
         search = f"%{form.search_term.data}%"
@@ -288,17 +290,17 @@ def manage_complaints():
     if form.priority.data:
         query = query.filter(Complaint.priority == form.priority.data)
         
-    if form.category_id.data:
+    if form.category_id.data and form.category_id.data > 0:
         query = query.filter(Complaint.category_id == form.category_id.data)
         
-    if form.ward_id.data:
+    if form.ward_id.data and form.ward_id.data > 0:
         query = query.filter(Complaint.ward_id == form.ward_id.data)
         
     if form.officer_id.data is not None:
-        if form.officer_id.data == -1:
-            query = query.filter(Complaint.assigned_officer_id.is_(None))
-        else:
+        if form.officer_id.data > 0:
             query = query.filter(Complaint.assigned_officer_id == form.officer_id.data)
+        elif form.officer_id.data == -1:
+            query = query.filter(Complaint.assigned_officer_id.is_(None))
         
     page = request.args.get("page", 1, type=int)
     complaints = (
@@ -319,7 +321,7 @@ def manage_complaints():
 @admin_required
 def view_complaint(complaint_id):
     complaint = (
-        Complaint.query.filter(Complaint.complaint_id == complaint_id)
+        Complaint.query.options(joinedload(Complaint.category), joinedload(Complaint.ward), joinedload(Complaint.assigned_officer), joinedload(Complaint.feedback)).filter(Complaint.complaint_id == complaint_id)
         .options(
             db.joinedload(Complaint.category),
             db.joinedload(Complaint.ward),

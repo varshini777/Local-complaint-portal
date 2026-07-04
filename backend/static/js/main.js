@@ -11,10 +11,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 5000);
   });
 
-  // Confirm action for forms with data-confirm attribute
-  document.querySelectorAll("[data-confirm]").forEach((form) => {
-    form.addEventListener("submit", (event) => {
-      if (!window.confirm(form.dataset.confirm)) {
+  // Confirm action for elements with data-confirm attribute
+  document.querySelectorAll("[data-confirm]").forEach((el) => {
+    const eventType = el.tagName === 'FORM' ? 'submit' : 'click';
+    el.addEventListener(eventType, (event) => {
+      if (!window.confirm(el.dataset.confirm)) {
         event.preventDefault();
       }
     });
@@ -32,11 +33,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Sidebar toggle for mobile
-  const sidebarToggle = document.querySelector(".sidebar-toggle");
-  const sidebar = document.querySelector(".sidebar");
+  const sidebarToggle = document.getElementById("sidebarToggle") || document.querySelector(".topbar-toggle");
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("sidebarOverlay");
+  
   if (sidebarToggle && sidebar) {
     sidebarToggle.addEventListener("click", () => {
-      sidebar.classList.toggle("collapsed");
+      sidebar.classList.toggle("show");
+      if (overlay) overlay.classList.toggle("show");
+    });
+  }
+  
+  if (overlay) {
+    overlay.addEventListener("click", () => {
+      sidebar.classList.remove("show");
+      overlay.classList.remove("show");
     });
   }
 
@@ -194,9 +205,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Date picker enhancement
   document.querySelectorAll('input[type="date"]').forEach((input) => {
-    input.min = new Date().toISOString().split("T")[0];
+    // Generate YYYY-MM-DD for IST timezone reliably
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Kolkata',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    const parts = formatter.formatToParts(new Date());
+    let year, month, day;
+    for (const part of parts) {
+      if (part.type === 'year') year = part.value;
+      if (part.type === 'month') month = part.value;
+      if (part.type === 'day') day = part.value;
+    }
+    input.min = `${year}-${month}-${day}`;
   });
 
   // Search filter enhancement

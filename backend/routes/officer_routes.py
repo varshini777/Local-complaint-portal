@@ -1,3 +1,4 @@
+from sqlalchemy.orm import joinedload
 from datetime import datetime, timezone
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
@@ -36,7 +37,7 @@ def log_officer_activity(action, details=None):
 
 
 def assigned_complaints_query():
-    return Complaint.query.filter(
+    return Complaint.query.options(joinedload(Complaint.category), joinedload(Complaint.ward), joinedload(Complaint.assigned_officer), joinedload(Complaint.feedback)).filter(
         Complaint.assigned_officer_id == current_user.user_id,
         Complaint.is_active.is_(True),
     )

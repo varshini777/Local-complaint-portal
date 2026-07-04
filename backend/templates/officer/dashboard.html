@@ -1,14 +1,113 @@
 {% extends "base_dashboard.html" %}
+{% import "components/macros.html" as ui %}
+
 {% block title %}Officer Dashboard{% endblock %}
 {% block back_button %}{% endblock %}
+
 {% block content %}
-<div class="page-header"><h1 class="h3">Officer Dashboard</h1></div>
-<div class="row row-cols-1 row-cols-md-5 g-3 mb-4">
-  {% with label="Assigned", value=total_assigned, icon="bi-clipboard-check" %}{% include "components/stat_card.html" %}{% endwith %}
-  {% with label="Pending", value=pending_complaints, icon="bi-hourglass" %}{% include "components/stat_card.html" %}{% endwith %}
-  {% with label="In Progress", value=in_progress_complaints, icon="bi-arrow-repeat" %}{% include "components/stat_card.html" %}{% endwith %}
-  {% with label="Resolved", value=resolved_complaints, icon="bi-check-circle" %}{% include "components/stat_card.html" %}{% endwith %}
-  {% with label="Avg Hours", value=average_resolution_hours, icon="bi-stopwatch" %}{% include "components/stat_card.html" %}{% endwith %}
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+  <h1 class="h3 mb-0">Officer Workspace</h1>
+  <div class="header-actions">
+    <a href="{{ url_for('officer.assigned_complaints') }}" class="btn btn-primary btn-sm"><i class="bi bi-inbox me-1"></i> My Queue</a>
+  </div>
 </div>
-<div class="card p-3"><h2 class="h5">Recent Assigned Complaints</h2><div class="table-responsive"><table class="table align-middle"><thead><tr><th>No.</th><th>Title</th><th>Status</th><th>Registered On</th></tr></thead><tbody>{% for complaint in recent_assigned_complaints %}<tr><td><a href="{{ url_for('officer.complaint_detail', complaint_id=complaint.complaint_id) }}">{{ complaint.complaint_number }}</a></td><td>{{ complaint.title }}</td><td><span class="badge badge-status-{{ complaint.status|replace(' ', '-') }}">{{ complaint.status }}</span></td><td>{{ complaint.submitted_at.strftime('%d %b %Y') }}</td></tr>{% else %}<tr><td colspan="4" class="text-muted">No assigned complaints.</td></tr>{% endfor %}</tbody></table></div></div>
+
+<div class="row row-cols-1 row-cols-md-3 row-cols-xl-5 g-4 mb-4">
+  <div class="col">
+    <div class="card card-dashboard h-100 border-start border-secondary border-4">
+      <div class="card-body">
+        <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">Assigned To Me</h6>
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 class="mb-0">{{ total_assigned }}</h2>
+          <i class="bi bi-clipboard-check text-secondary fs-4"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card card-dashboard h-100 border-start border-warning border-4">
+      <div class="card-body">
+        <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">Pending</h6>
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 class="mb-0">{{ pending_complaints }}</h2>
+          <i class="bi bi-hourglass text-warning fs-4"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card card-dashboard h-100 border-start border-primary border-4">
+      <div class="card-body">
+        <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">In Progress</h6>
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 class="mb-0">{{ in_progress_complaints }}</h2>
+          <i class="bi bi-arrow-repeat text-primary fs-4"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card card-dashboard h-100 border-start border-success border-4">
+      <div class="card-body">
+        <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">Resolved</h6>
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 class="mb-0">{{ resolved_complaints }}</h2>
+          <i class="bi bi-check-circle text-success fs-4"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card card-dashboard h-100 border-start border-info border-4">
+      <div class="card-body">
+        <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">Avg Resolution</h6>
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 class="mb-0">{{ average_resolution_hours }}<small class="fs-6 text-muted ms-1">hrs</small></h2>
+          <i class="bi bi-stopwatch text-info fs-4"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card card-dashboard">
+  <div class="card-header bg-white border-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
+    <h5 class="card-title mb-0">My Inbox (Recent Assignments)</h5>
+  </div>
+  <div class="card-body p-0 mt-3">
+    <div class="table-responsive">
+      <table class="table table-modern mb-0">
+        <thead>
+          <tr>
+            <th>Complaint No.</th>
+            <th>Title</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for complaint in recent_assigned_complaints %}
+          <tr>
+            <td><strong>{{ complaint.complaint_number }}</strong></td>
+            <td>{{ complaint.title | truncate(40) }}</td>
+            <td>{{ ui.priority_badge(complaint.priority) }}</td>
+            <td>{{ ui.status_badge(complaint.status) }}</td>
+            <td>
+              <a href="{{ url_for('officer.complaint_detail', complaint_id=complaint.complaint_id) }}" class="btn btn-sm btn-outline-primary">Process</a>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" class="text-center py-5 text-muted">
+              <i class="bi bi-cup-hot fs-1 d-block mb-3 text-light"></i>
+              No assigned complaints at the moment.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 {% endblock %}

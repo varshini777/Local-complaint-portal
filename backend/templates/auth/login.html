@@ -1,21 +1,28 @@
 {% extends "base.html" %}
+{% from "components/macros.html" import form_field, empty_state, table_header with context %}
 {% block title %}Login{% endblock %}
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-lg-5">
-    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-sm mb-3"><i class="bi bi-arrow-left"></i> Back to Home</a>
-    <div class="card p-4">
-      <h1 class="h4 mb-3">Sign in</h1>
-      <form method="post">
+    <div class="card p-4 shadow-sm border-0 mt-5">
+      <div class="text-center mb-4">
+        <i class="bi bi-shield-check text-primary mb-2" style="font-size: 3rem;"></i>
+        <h1 class="h4">Sign In</h1>
+        <p class="text-muted">Access the LocalComplaint Portal</p>
+      </div>
+      <form autocomplete="off" method="post">
         {{ form.hidden_tag() }}
-        <div class="mb-3">{{ form.email.label(class="form-label") }}{{ form.email(class="form-control") }}</div>
-        <div class="mb-3">{{ form.password.label(class="form-label") }}{{ form.password(class="form-control") }}</div>
-        <div class="form-check mb-3">{{ form.remember_me(class="form-check-input") }}{{ form.remember_me.label(class="form-check-label") }}</div>
-        {{ form.submit(class="btn btn-primary w-100") }}
+        {{ form_field(form.email, is_floating=true) }}
+        {{ form_field(form.password, is_floating=true) }}
+        <div class="form-check mb-4">
+          {{ form.remember_me(class="form-check-input") }}
+          {{ form.remember_me.label(class="form-check-label text-muted") }}
+        </div>
+        {{ form.submit(class="btn btn-primary w-100 py-2 fw-medium shadow-sm") }}
       </form>
-      <div class="d-flex justify-content-between mt-3">
-        <a href="{{ url_for('auth.register') }}">Create account</a>
-        <a href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
+      <div class="d-flex justify-content-between mt-4 small">
+        <a href="{{ url_for('auth.register') }}" class="text-decoration-none">Create account</a>
+        <a href="{{ url_for('auth.forgot_password') }}" class="text-decoration-none">Forgot password?</a>
       </div>
     </div>
   </div>

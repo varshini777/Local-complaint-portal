@@ -1,3 +1,4 @@
+from sqlalchemy.orm import joinedload
 from datetime import datetime, timedelta
 
 from flask import (
@@ -70,7 +71,7 @@ def populate_complaint_form_choices(form):
 @citizen_bp.route("/dashboard")
 @citizen_required
 def dashboard():
-    complaints_query = Complaint.query.filter(
+    complaints_query = Complaint.query.options(joinedload(Complaint.category), joinedload(Complaint.ward)).filter(
         Complaint.citizen_id == current_user.user_id,
         Complaint.is_active.is_(True),
     )
@@ -194,7 +195,7 @@ def complaint_history():
     status = request.args.get("status", "").strip()
     category_id = request.args.get("category", "").strip()
 
-    complaints = Complaint.query.filter(
+    complaints = Complaint.query.options(joinedload(Complaint.category), joinedload(Complaint.ward)).filter(
         Complaint.citizen_id == current_user.user_id,
         Complaint.is_active.is_(True),
     )
@@ -235,7 +236,7 @@ def complaint_history():
 @citizen_required
 def complaint_detail(complaint_id):
     complaint = (
-        Complaint.query.filter(
+        Complaint.query.options(joinedload(Complaint.category), joinedload(Complaint.ward), joinedload(Complaint.assigned_officer), joinedload(Complaint.feedback)).filter(
             Complaint.complaint_id == complaint_id,
             Complaint.citizen_id == current_user.user_id,
             Complaint.is_active.is_(True),
@@ -352,7 +353,7 @@ def change_password():
 @citizen_bp.route("/complaints/<int:complaint_id>/feedback", methods=["GET", "POST"])
 @citizen_required
 def submit_feedback(complaint_id):
-    complaint = Complaint.query.filter(
+    complaint = Complaint.query.options(joinedload(Complaint.category), joinedload(Complaint.ward), joinedload(Complaint.assigned_officer), joinedload(Complaint.feedback)).filter(
         Complaint.complaint_id == complaint_id,
         Complaint.citizen_id == current_user.user_id,
         Complaint.is_active.is_(True),

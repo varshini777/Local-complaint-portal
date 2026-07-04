@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, Response
+from flask import Blueprint, render_template, Response, stream_with_context
 from backend.routes.auth_routes import admin_required
 from backend.services.report_service import (
     get_dashboard_metrics,
@@ -45,7 +45,7 @@ def reports_dashboard():
 def export_complaints():
     generator = export_complaints_csv()
     return Response(
-        generator,
+        stream_with_context(generator),
         mimetype="text/csv",
         headers={"Content-Disposition": "attachment;filename=complaints_report.csv"}
     )
@@ -55,7 +55,7 @@ def export_complaints():
 def export_officers():
     generator = export_officer_performance_csv()
     return Response(
-        generator,
+        stream_with_context(generator),
         mimetype="text/csv",
         headers={"Content-Disposition": "attachment;filename=officer_performance.csv"}
     )
@@ -65,7 +65,7 @@ def export_officers():
 def export_feedback():
     generator = export_feedback_csv()
     return Response(
-        generator,
+        stream_with_context(generator),
         mimetype="text/csv",
         headers={"Content-Disposition": "attachment;filename=feedback_report.csv"}
     )

@@ -17,11 +17,20 @@ def create_app(config_name=None):
     init_extensions(app)
     register_blueprints(app)
     register_context_processors(app)
+    register_jinja_filters(app)
     register_cli_commands(app)
     register_error_handlers(app)
     configure_session_security(app)
     ensure_upload_directories(app)
     register_temporary_routes(app)
+
+    @app.after_request
+    def add_header(response):
+        # Prevent browser back-button form data retention (bfcache/history)
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "-1"
+        return response
 
     return app
 
@@ -51,6 +60,12 @@ def register_context_processors(app):
     from backend.utils.context_processors import register_context_processors as register_processors
 
     register_processors(app)
+
+
+def register_jinja_filters(app):
+    from backend.utils.datetime_utils import register_datetime_filters
+    
+    register_datetime_filters(app)
 
 
 def register_blueprints(app):

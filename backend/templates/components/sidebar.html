@@ -3,24 +3,23 @@
   <div class="sidebar-section">
     <div class="sidebar-label">{{ current_user.role|title }} Menu</div>
     {% if current_user.is_admin %}
-      <a href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2"></i>Dashboard</a>
-      <a href="{{ url_for('admin.manage_users') }}"><i class="bi bi-people"></i>Users</a>
-      <a href="{{ url_for('admin.create_officer') }}"><i class="bi bi-person-badge"></i>New Officer</a>
-      <a href="{{ url_for('admin.manage_wards') }}"><i class="bi bi-map"></i>Wards</a>
-      <a href="{{ url_for('admin.manage_complaints') }}"><i class="bi bi-list-check"></i>Complaints</a>
-      <a href="{{ url_for('admin.manage_settings') }}"><i class="bi bi-gear"></i>Settings</a>
-      <a href="{{ url_for('admin.activity_logs') }}"><i class="bi bi-clock-history"></i>Activity Logs</a>
-      <a href="{{ url_for('reports.reports_dashboard') }}"><i class="bi bi-bar-chart"></i>Reports</a>
+      <a href="{{ url_for('admin.dashboard') }}" class="{% if request.endpoint == 'admin.dashboard' %}active{% endif %}"><i class="bi bi-speedometer2"></i>Dashboard</a>
+      <a href="{{ url_for('admin.manage_users') }}" class="{% if request.endpoint == 'admin.manage_users' %}active{% endif %}"><i class="bi bi-people"></i>Users</a>
+      <a href="{{ url_for('admin.manage_wards') }}" class="{% if request.endpoint == 'admin.manage_wards' %}active{% endif %}"><i class="bi bi-map"></i>Wards</a>
+      <a href="{{ url_for('admin.manage_complaints') }}" class="{% if request.endpoint == 'admin.manage_complaints' %}active{% endif %}"><i class="bi bi-list-check"></i>Complaints</a>
+      <a href="{{ url_for('admin.manage_settings') }}" class="{% if request.endpoint == 'admin.manage_settings' %}active{% endif %}"><i class="bi bi-gear"></i>Settings</a>
+      <a href="{{ url_for('admin.activity_logs') }}" class="{% if request.endpoint == 'admin.activity_logs' %}active{% endif %}"><i class="bi bi-clock-history"></i>Activity Logs</a>
+      <a href="{{ url_for('reports.reports_dashboard') }}" class="{% if request.endpoint == 'reports.reports_dashboard' %}active{% endif %}"><i class="bi bi-bar-chart"></i>Reports</a>
     {% elif current_user.is_officer %}
-      <a href="{{ url_for('officer.dashboard') }}"><i class="bi bi-speedometer2"></i>Dashboard</a>
-      <a href="{{ url_for('officer.assigned_complaints') }}"><i class="bi bi-clipboard-check"></i>Assigned Complaints</a>
-      <a href="{{ url_for('officer.profile') }}"><i class="bi bi-person"></i>Profile</a>
+      <a href="{{ url_for('officer.dashboard') }}" class="{% if request.endpoint == 'officer.dashboard' %}active{% endif %}"><i class="bi bi-speedometer2"></i>Dashboard</a>
+      <a href="{{ url_for('officer.assigned_complaints') }}" class="{% if request.endpoint == 'officer.assigned_complaints' %}active{% endif %}"><i class="bi bi-clipboard-check"></i>Assigned Complaints</a>
+      <a href="{{ url_for('officer.profile') }}" class="{% if request.endpoint == 'officer.profile' %}active{% endif %}"><i class="bi bi-person"></i>Profile</a>
     {% elif current_user.is_citizen %}
-      <a href="{{ url_for('citizen.dashboard') }}"><i class="bi bi-speedometer2"></i>Dashboard</a>
-      <a href="{{ url_for('citizen.submit_complaint') }}"><i class="bi bi-plus-circle"></i>Submit Complaint</a>
-      <a href="{{ url_for('citizen.complaint_history') }}"><i class="bi bi-folder2-open"></i>Complaint History</a>
-      <a href="{{ url_for('citizen.notifications') }}"><i class="bi bi-bell"></i>Notifications</a>
-      <a href="{{ url_for('citizen.profile') }}"><i class="bi bi-person"></i>Profile</a>
+      <a href="{{ url_for('citizen.dashboard') }}" class="{% if request.endpoint == 'citizen.dashboard' %}active{% endif %}"><i class="bi bi-speedometer2"></i>Dashboard</a>
+      <a href="{{ url_for('citizen.submit_complaint') }}" class="{% if request.endpoint == 'citizen.submit_complaint' %}active{% endif %}"><i class="bi bi-plus-circle"></i>Submit Complaint</a>
+      <a href="{{ url_for('citizen.complaint_history') }}" class="{% if request.endpoint == 'citizen.complaint_history' %}active{% endif %}"><i class="bi bi-folder2-open"></i>Complaint History</a>
+      <a href="{{ url_for('citizen.notifications') }}" class="{% if request.endpoint == 'citizen.notifications' %}active{% endif %}"><i class="bi bi-bell"></i>Notifications</a>
+      <a href="{{ url_for('citizen.profile') }}" class="{% if request.endpoint == 'citizen.profile' %}active{% endif %}"><i class="bi bi-person"></i>Profile</a>
     {% endif %}
   </div>
 </aside>

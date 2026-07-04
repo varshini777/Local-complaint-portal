@@ -1,5 +1,41 @@
 {% extends "base_dashboard.html" %}
+{% from "components/macros.html" import form_field, empty_state, table_header with context %}
 {% block title %}{{ action }} Officer{% endblock %}
 {% block content %}
-<div class="card p-4"><h1 class="h4 mb-3">{{ action }} Officer</h1><form method="post">{{ form.hidden_tag() }}<div class="row g-3">{% for field in [form.full_name, form.email, form.phone, form.password] %}<div class="col-md-6">{{ field.label(class="form-label") }}{{ field(class="form-control") }}</div>{% endfor %}<div class="col-12 form-check ms-2">{{ form.is_active(class="form-check-input") }}{{ form.is_active.label(class="form-check-label") }}</div></div>{{ form.submit(class="btn btn-primary mt-4") }}</form></div>
+<div class="page-header mb-4 d-flex justify-content-between align-items-center">
+  <h1 class="h3 mb-0">{{ action }} Officer</h1>
+  <a href="{{ url_for('admin.officers') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back to Officers</a>
+</div>
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card p-4 shadow-sm border-0">
+      <form autocomplete="off" method="post">
+        {{ form.hidden_tag() }}
+        <div class="row g-3">
+          <div class="col-md-6">
+            {{ form_field(form.full_name, is_floating=true) }}
+          </div>
+          <div class="col-md-6">
+            {{ form_field(form.email, is_floating=true) }}
+          </div>
+          <div class="col-md-6">
+            {{ form_field(form.phone, is_floating=true) }}
+          </div>
+          <div class="col-md-6">
+            {{ form_field(form.password, is_floating=true) }}
+          </div>
+          <div class="col-12">
+            <div class="form-check mt-2">
+              {{ form.is_active(class="form-check-input") }}
+              {{ form.is_active.label(class="form-check-label fw-medium") }}
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-top d-flex gap-2">
+          {{ form.submit(class="btn btn-primary px-4") }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

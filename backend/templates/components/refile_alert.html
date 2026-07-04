@@ -2,7 +2,7 @@
   <i class="bi bi-exclamation-triangle-fill mt-1"></i>
   <div>
     <strong>No progress for {{ complaint.days_since_submitted }} days.</strong>
-    This complaint was registered on {{ complaint.submitted_at.strftime('%d %b %Y') }}.
+    This complaint was registered on {{ complaint.submitted_at|date }}.
     If your issue is still unresolved, please file the complaint again.
     <div class="mt-2">
       <a class="btn btn-sm btn-warning" href="{{ url_for('citizen.submit_complaint') }}">

@@ -1,6 +1,6 @@
-<a href="{{ url_for('index') }}"><i class="bi bi-house"></i>Home</a>
-<a href="{{ url_for('citizen.dashboard') }}"><i class="bi bi-speedometer2"></i>Dashboard</a>
-<a href="{{ url_for('citizen.submit_complaint') }}"><i class="bi bi-plus-circle"></i>Submit Complaint</a>
-<a href="{{ url_for('citizen.complaint_history') }}"><i class="bi bi-list-check"></i>My Complaints</a>
-<a href="{{ url_for('citizen.notifications') }}"><i class="bi bi-bell"></i>Notifications</a>
-<a href="{{ url_for('citizen.profile') }}"><i class="bi bi-person"></i>Profile</a>
+<a href="{{ url_for('index') }}" class="sidebar-link {{ 'active' if request.endpoint == 'index' else '' }}"><i class="bi bi-house"></i>Home</a>
+<a href="{{ url_for('citizen.dashboard') }}" class="sidebar-link {{ 'active' if request.endpoint == 'citizen.dashboard' else '' }}"><i class="bi bi-speedometer2"></i>Dashboard</a>
+<a href="{{ url_for('citizen.submit_complaint') }}" class="sidebar-link {{ 'active' if request.endpoint == 'citizen.submit_complaint' else '' }}"><i class="bi bi-plus-circle"></i>Submit Complaint</a>
+<a href="{{ url_for('citizen.complaint_history') }}" class="sidebar-link {{ 'active' if request.endpoint == 'citizen.complaint_history' else '' }}"><i class="bi bi-list-check"></i>My Complaints</a>
+<a href="{{ url_for('citizen.notifications') }}" class="sidebar-link {{ 'active' if request.endpoint == 'citizen.notifications' else '' }}"><i class="bi bi-bell"></i>Notifications</a>
+<a href="{{ url_for('citizen.profile') }}" class="sidebar-link {{ 'active' if request.endpoint == 'citizen.profile' else '' }}"><i class="bi bi-person"></i>Profile</a>

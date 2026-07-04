@@ -1,21 +1,23 @@
 {% extends "base_dashboard.html" %}
+{% from "components/macros.html" import form_field, empty_state, table_header with context %}
 {% block title %}Complaint History{% endblock %}
 {% block content %}
 <div class="page-header"><h1 class="h3">Complaint History</h1></div>
 <div class="filter-panel">
-<form class="row g-2" method="get">
+<form autocomplete="off" class="row g-2" method="get">
   <div class="col-md-4"><input class="form-control" name="complaint_number" placeholder="Complaint Number" value="{{ filters.complaint_number }}"></div>
   <div class="col-md-3"><select class="form-select" name="status"><option value="">All Statuses</option>{% for status in statuses %}<option value="{{ status }}" {% if filters.status == status %}selected{% endif %}>{{ status }}</option>{% endfor %}</select></div>
   <div class="col-md-3"><select class="form-select" name="category"><option value="">All Categories</option>{% for category in categories %}<option value="{{ category.category_id }}" {% if filters.category|string == category.category_id|string %}selected{% endif %}>{{ category.category_name }}</option>{% endfor %}</select></div>
   <div class="col-md-2"><button class="btn btn-primary w-100">Search</button></div>
 </form>
 </div>
-<div class="card p-3 table-responsive"><table class="table align-middle">
+<div class="card p-3 table-responsive"><div class="table-responsive">
+<table class="table table-hover align-middle align-middle">
   <thead><tr><th>No.</th><th>Title</th><th>Status</th><th>Priority</th><th>Registered On</th><th>Action</th></tr></thead>
   <tbody>{% for complaint in complaints %}<tr>
     <td><a href="{{ url_for('citizen.complaint_detail', complaint_id=complaint.complaint_id) }}">{{ complaint.complaint_number }}</a></td><td>{{ complaint.title }}</td>
-    <td><span class="badge badge-status-{{ complaint.status|replace(' ', '-') }}">{{ complaint.status }}</span></td><td><span class="badge badge-priority-{{ complaint.priority }}">{{ complaint.priority }}</span></td>
-    <td>{{ complaint.submitted_at.strftime('%d %b %Y') }}</td>
+    <td>{{ status_badge(c.status if c is defined else complaint.status) }}</td><td>{{ priority_badge(c.priority if c is defined else complaint.priority) }}</td>
+    <td>{{ complaint.submitted_at|date }}</td>
     <td>
       {% if complaint.needs_refile %}
       <a class="btn btn-sm btn-warning" href="{{ url_for('citizen.submit_complaint') }}" title="No progress for {{ complaint.days_since_submitted }} days">File Again</a>
@@ -24,5 +26,6 @@
       {% endif %}
     </td>
   </tr>{% else %}<tr><td colspan="6" class="text-muted">No complaints found.</td></tr>{% endfor %}</tbody>
-</table>{% include "components/pagination.html" %}</div>
+</table>
+</div>{% include "components/pagination.html" %}</div>
 {% endblock %}

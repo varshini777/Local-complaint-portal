@@ -1,32 +1,275 @@
 {% extends "base_dashboard.html" %}
+{% from "components/macros.html" import form_field, empty_state, table_header with context %}
 {% block title %}Reports Dashboard{% endblock %}
 {% block content %}
-<div class="page-header"><h1 class="h3">Reports Dashboard</h1><div><a class="btn btn-outline-primary" href="{{ url_for('reports.export_complaints') }}">Complaints CSV</a><a class="btn btn-outline-primary" href="{{ url_for('reports.export_officers') }}">Officers CSV</a><a class="btn btn-outline-primary" href="{{ url_for('reports.export_feedback') }}">Feedback CSV</a></div></div>
-<div class="row row-cols-1 row-cols-md-4 g-3 mb-4">{% for key, value in dashboard_metrics.items() %}{% with label=key|replace('_',' ')|title, value=value, icon="bi-bar-chart" %}{% include "components/stat_card.html" %}{% endwith %}{% endfor %}</div>
-<div class="row g-3">
-  {% for chart_id, title in [("categoryChart","Category Distribution"),("wardChart","Ward Analytics"),("officerChart","Officer Performance"),("escalationChart","Escalation Analytics"),("monthlyChart","Monthly Trends"),("agingChart","Complaint Aging"),("feedbackChart","Feedback Ratings")] %}
-  <div class="col-lg-6"><div class="card p-3"><h2 class="h5">{{ title }}</h2><div style="height:300px"><canvas id="{{ chart_id }}"></canvas></div></div></div>
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+  <h1 class="h3 mb-0">Reports Dashboard</h1>
+  <div>
+    <a class="btn btn-outline-primary" href="{{ url_for('reports.export_complaints') }}"><i class="bi bi-filetype-csv me-1"></i> Complaints CSV</a>
+    <a class="btn btn-outline-primary" href="{{ url_for('reports.export_officers') }}"><i class="bi bi-filetype-csv me-1"></i> Officers CSV</a>
+    <a class="btn btn-outline-primary" href="{{ url_for('reports.export_feedback') }}"><i class="bi bi-filetype-csv me-1"></i> Feedback CSV</a>
+  </div>
+</div>
+
+{% if dashboard_metrics["Total Complaints"] == 0 %}
+<div class="card p-5 text-center mt-4 border-0 shadow-sm">
+  <div class="empty-state py-5">
+    <i class="bi bi-bar-chart-line text-muted mb-3 d-block" style="font-size: 4rem; opacity: 0.5;"></i>
+    <h4 class="fw-bold">No complaint data available yet.</h4>
+    <p class="text-muted mb-4">Analytics will appear once complaints are submitted.</p>
+  </div>
+</div>
+{% else %}
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3 mb-4">
+  {% for key, value in dashboard_metrics.items() %}
+    {% with label=key|replace('_',' ')|title, value=value, icon="bi-bar-chart" %}
+      {% include "components/stat_card.html" %}
+    {% endwith %}
   {% endfor %}
 </div>
+
+<div class="row g-4 mb-4">
+  {% for chart_id, title in [("categoryChart","Category Distribution"),("wardChart","Ward Analytics"),("officerChart","Officer Performance"),("escalationChart","Escalation Analytics"),("monthlyChart","Monthly Trends"),("agingChart","Complaint Aging"),("feedbackChart","Feedback Ratings")] %}
+  <div class="col-lg-6">
+    <div class="card h-100 shadow-sm border-0">
+      <div class="card-header bg-white border-0 pt-4 pb-0">
+        <h2 class="h5 mb-0">{{ title }}</h2>
+      </div>
+      <div class="card-body">
+        <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
+          <canvas id="{{ chart_id }}"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Detailed Officer Analytics Table -->
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-header bg-white border-0 pt-4 pb-0">
+    <h2 class="h5 mb-0">Officer Performance Details</h2>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Officer Name</th>
+            <th class="text-center">Total Assigned</th>
+            <th class="text-center">Pending</th>
+            <th class="text-center">Resolved</th>
+            <th class="text-center">Closed</th>
+            <th class="text-center">Escalated</th>
+            <th class="text-center">Resolution %</th>
+            <th class="text-center">Avg Time (hrs)</th>
+            <th class="text-center">Citizen Rating</th>
+            <th class="text-center">Performance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for officer in officer_performance %}
+          <tr>
+            <td class="fw-medium">{{ officer.officer_name }}</td>
+            <td class="text-center">{{ officer.assigned_count }}</td>
+            <td class="text-center">{{ officer.pending_count }}</td>
+            <td class="text-center text-success">{{ officer.resolved_count }}</td>
+            <td class="text-center text-secondary">{{ officer.closed_count }}</td>
+            <td class="text-center text-danger">{{ officer.escalated_count }}</td>
+            <td class="text-center">
+              <div class="d-flex align-items-center justify-content-center">
+                <span class="me-2">{{ officer.resolution_percentage }}%</span>
+                <div class="progress" style="width: 50px; height: 6px;">
+                  <div class="progress-bar {% if officer.resolution_percentage >= 80 %}bg-success{% elif officer.resolution_percentage >= 50 %}bg-primary{% else %}bg-warning{% endif %}" role="progressbar" style="width: {{ officer.resolution_percentage }}%"></div>
+                </div>
+              </div>
+            </td>
+            <td class="text-center">{{ officer.average_resolution_hours }}</td>
+            <td class="text-center">
+              {% if officer.citizen_rating > 0 %}
+                <i class="bi bi-star-fill text-warning"></i> {{ officer.citizen_rating }}
+              {% else %}
+                <span class="text-muted">N/A</span>
+              {% endif %}
+            </td>
+            <td class="text-center">
+              {% set badge = officer.badge %}
+              {% if badge == 'Excellent' %}
+                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2">Excellent</span>
+              {% elif badge == 'Good' %}
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2">Good</span>
+              {% elif badge == 'Average' %}
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-3 py-2">Average</span>
+              {% elif badge == 'Needs Attention' %}
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-2">Needs Attention</span>
+              {% else %}
+                <span class="badge bg-light text-dark border rounded-pill px-3 py-2">N/A</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="10" class="text-center py-4 text-muted">No officer data available.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
+
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-const categoryData = {{ category_analytics|tojson }};
-const wardData = {{ ward_analytics|tojson }};
-const officerData = {{ officer_performance|tojson }};
-const escalationData = {{ escalation_analytics|tojson }};
-const monthlyData = {{ monthly_trends|tojson }};
-const agingData = {{ complaint_aging|tojson }};
-const feedbackData = {{ feedback_analytics|tojson }};
-function labels(obj){ return Array.isArray(obj) ? obj.map(x => x.label || x.name || x.category || x.month || x.ward || x.ward_name || x.officer || x.officer_name || x.rating) : Object.keys(obj || {}); }
-function values(obj){ return Array.isArray(obj) ? obj.map(x => x.value || x.count || x.total || x.total_count || x.resolved || x.resolved_count || 0) : Object.values(obj || {}); }
-portalChart("categoryChart", "doughnut", labels(categoryData), values(categoryData), "Categories");
-portalChart("wardChart", "bar", labels(wardData), values(wardData), "Wards");
-portalChart("officerChart", "bar", labels(officerData), values(officerData), "Officers");
-portalChart("escalationChart", "pie", labels(escalationData), values(escalationData), "Escalation");
-portalChart("monthlyChart", "line", labels(monthlyData), values(monthlyData), "Monthly");
-portalChart("agingChart", "bar", labels(agingData), values(agingData), "Aging");
-portalChart("feedbackChart", "bar", labels(feedbackData), values(feedbackData), "Feedback");
+document.addEventListener("DOMContentLoaded", function() {
+    if (typeof Chart === 'undefined') return;
+
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' } }
+    };
+    
+    // Category Distribution (Doughnut)
+    const catData = {{ category_analytics|tojson }};
+    const catCanvas = document.getElementById('categoryChart');
+    if(catCanvas && catData && catData.length > 0) {
+        new Chart(catCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: catData.map(d => d.category),
+                datasets: [{
+                    data: catData.map(d => d.count),
+                    backgroundColor: ['#2f80ed', '#27ae60', '#f2c94c', '#eb5757', '#9b51e0', '#56ccf2', '#f2994a', '#17a2b8']
+                }]
+            },
+            options: commonOptions
+        });
+    }
+
+    // Ward Analytics (Horizontal Bar)
+    const wardData = {{ ward_analytics|tojson }};
+    const wardCanvas = document.getElementById('wardChart');
+    if(wardCanvas && wardData && wardData.length > 0) {
+        new Chart(wardCanvas, {
+            type: 'bar',
+            data: {
+                labels: wardData.map(d => d.ward),
+                datasets: [{
+                    label: 'Complaints',
+                    data: wardData.map(d => d.total_count),
+                    backgroundColor: '#2f80ed'
+                }]
+            },
+            options: Object.assign({}, commonOptions, { indexAxis: 'y' })
+        });
+    }
+
+    // Officer Performance (Bar - Pending/Resolved)
+    const officerData = {{ officer_performance|tojson }};
+    const officerCanvas = document.getElementById('officerChart');
+    if(officerCanvas && officerData && officerData.length > 0) {
+        new Chart(officerCanvas, {
+            type: 'bar',
+            data: {
+                labels: officerData.map(d => d.officer_name),
+                datasets: [
+                    {
+                        label: 'Pending',
+                        data: officerData.map(d => d.pending_count),
+                        backgroundColor: '#f2c94c'
+                    },
+                    {
+                        label: 'Resolved',
+                        data: officerData.map(d => d.resolved_count),
+                        backgroundColor: '#27ae60'
+                    }
+                ]
+            },
+            options: commonOptions
+        });
+    }
+
+    // Monthly Trends (Line)
+    const monthlyData = {{ monthly_trends|tojson }};
+    const monthlyCanvas = document.getElementById('monthlyChart');
+    if(monthlyCanvas && monthlyData && monthlyData.length > 0) {
+        new Chart(monthlyCanvas, {
+            type: 'line',
+            data: {
+                labels: monthlyData.map(d => d.month),
+                datasets: [
+                    { label: 'Submitted', data: monthlyData.map(d => d.submitted), borderColor: '#2f80ed', tension: 0.3, backgroundColor: 'rgba(47, 128, 237, 0.1)', fill: true },
+                    { label: 'Resolved', data: monthlyData.map(d => d.resolved), borderColor: '#27ae60', tension: 0.3, backgroundColor: 'transparent' },
+                    { label: 'Closed', data: monthlyData.map(d => d.closed), borderColor: '#6c757d', tension: 0.3, backgroundColor: 'transparent' }
+                ]
+            },
+            options: commonOptions
+        });
+    }
+
+    // Escalation Analytics (Pie)
+    const escData = {{ escalation_analytics|tojson }};
+    const escCanvas = document.getElementById('escalationChart');
+    if(escCanvas && escData && Object.keys(escData).length > 0) {
+        const hasValues = Object.values(escData).some(val => val > 0);
+        if (hasValues) {
+            new Chart(escCanvas, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(escData),
+                    datasets: [{
+                        data: Object.values(escData),
+                        backgroundColor: ['#27ae60', '#f2c94c', '#eb5757']
+                    }]
+                },
+                options: commonOptions
+            });
+        }
+    }
+
+    // Complaint Aging (Bar)
+    const agingData = {{ complaint_aging|tojson }};
+    const agingCanvas = document.getElementById('agingChart');
+    if(agingCanvas && agingData && Object.keys(agingData).length > 0) {
+        const hasValues = Object.values(agingData).some(val => val > 0);
+        if (hasValues) {
+            new Chart(agingCanvas, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(agingData),
+                    datasets: [{
+                        label: 'Unresolved Complaints',
+                        data: Object.values(agingData),
+                        backgroundColor: '#f2994a'
+                    }]
+                },
+                options: commonOptions
+            });
+        }
+    }
+
+    // Feedback (Doughnut)
+    const feedData = {{ feedback_analytics|tojson }};
+    const feedCanvas = document.getElementById('feedbackChart');
+    if(feedCanvas && feedData && feedData.distribution) {
+        const hasValues = Object.values(feedData.distribution).some(val => val > 0);
+        if (hasValues) {
+            new Chart(feedCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(feedData.distribution).map(k => k + ' Star'),
+                    datasets: [{
+                        data: Object.values(feedData.distribution),
+                        backgroundColor: ['#eb5757', '#f2994a', '#f2c94c', '#27ae60', '#2f80ed']
+                    }]
+                },
+                options: commonOptions
+            });
+        }
+    }
+});
 </script>
 {% endblock %}

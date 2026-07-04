@@ -1,0 +1,67 @@
+{% macro status_badge(status) %}
+  {% set badge_class = status | replace(' ', '-') %}
+  <span class="badge badge-status-{{ badge_class }}">{{ status }}</span>
+{% endmacro %}
+
+{% macro priority_badge(priority) %}
+  <span class="badge badge-priority-{{ priority }}">{{ priority }}</span>
+{% endmacro %}
+
+{% macro escalation_badge(level) %}
+  <span class="badge badge-escalation-{{ level }}">{{ level }}</span>
+{% endmacro %}
+
+{% macro empty_state(icon='bi-inbox', title='No data available', message='There is no data to display right now.') %}
+  <div class="empty-state text-center py-5 my-4">
+    <i class="bi {{ icon }} text-muted d-block mb-3" style="font-size: 3rem; opacity: 0.5;"></i>
+    <h4 class="h5 fw-bold text-dark">{{ title }}</h4>
+    <p class="text-muted">{{ message }}</p>
+  </div>
+{% endmacro %}
+
+{% macro form_field(field, is_floating=false, show_label=true) %}
+  <div class="{% if is_floating %}form-floating{% endif %} mb-3">
+    {% if not is_floating and show_label %}
+      {{ field.label(class="form-label fw-medium") }}
+    {% endif %}
+    
+    {% set field_class = "form-control" %}
+    {% if field.type == 'SelectField' %}
+      {% set field_class = "form-select" %}
+    {% elif field.type == 'FileField' %}
+      {% set field_class = "form-control" %}
+    {% endif %}
+    
+    {% if field.errors %}
+      {% set field_class = field_class ~ " is-invalid" %}
+    {% endif %}
+    
+    {{ field(class=field_class, placeholder=field.label.text if is_floating else None) }}
+    
+    {% if is_floating and show_label %}
+      {{ field.label() }}
+    {% endif %}
+    
+    {% if field.errors %}
+      <div class="invalid-feedback d-block">
+        {% for error in field.errors %}
+          <div>{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+    {% if field.description %}
+      <div class="form-text">{{ field.description }}</div>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{% macro table_header(columns) %}
+  <thead class="table-light table-sticky-header">
+    <tr>
+      {% for col in columns %}
+        <th>{{ col }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+{% endmacro %}

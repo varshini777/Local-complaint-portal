@@ -1,17 +1,167 @@
 {% extends "base_dashboard.html" %}
+{% import "components/macros.html" as ui %}
+
 {% block title %}Admin Dashboard{% endblock %}
 {% block back_button %}{% endblock %}
+
 {% block content %}
-<div class="page-header"><h1 class="h3">Admin Dashboard</h1></div>
-<div class="row row-cols-1 row-cols-md-4 g-3 mb-4">
-  {% with label="Users", value=total_users, icon="bi-people" %}{% include "components/stat_card.html" %}{% endwith %}
-  {% with label="Citizens", value=total_citizens, icon="bi-person" %}{% include "components/stat_card.html" %}{% endwith %}
-  {% with label="Officers", value=total_officers, icon="bi-person-badge" %}{% include "components/stat_card.html" %}{% endwith %}
-  {% with label="Complaints", value=total_complaints, icon="bi-list-check" %}{% include "components/stat_card.html" %}{% endwith %}
-  {% with label="Pending", value=pending_complaints, icon="bi-hourglass" %}{% include "components/stat_card.html" %}{% endwith %}
-  {% with label="Resolved", value=resolved_complaints, icon="bi-check-circle" %}{% include "components/stat_card.html" %}{% endwith %}
-  {% with label="Closed", value=closed_complaints, icon="bi-lock" %}{% include "components/stat_card.html" %}{% endwith %}
-  {% with label="Escalated", value=escalated_complaints, icon="bi-exclamation-triangle" %}{% include "components/stat_card.html" %}{% endwith %}
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+  <h1 class="h3 mb-0">System Overview</h1>
+  <div class="header-actions">
+    <a href="{{ url_for('admin.manage_complaints') }}" class="btn btn-outline-primary btn-sm"><i class="bi bi-list-check me-1"></i> View All Complaints</a>
+    <a href="{{ url_for('reports.reports_dashboard') }}" class="btn btn-primary btn-sm"><i class="bi bi-bar-chart me-1"></i> Analytics</a>
+  </div>
 </div>
-<div class="row g-3"><div class="col-lg-7"><div class="card p-3"><h2 class="h5">Recent Complaints</h2><table class="table"><tbody>{% for complaint in recent_complaints %}<tr><td><a href="{{ url_for('admin.view_complaint', complaint_id=complaint.complaint_id) }}">{{ complaint.complaint_number }}</a></td><td>{{ complaint.title }}</td><td><span class="badge badge-status-{{ complaint.status|replace(' ', '-') }}">{{ complaint.status }}</span></td></tr>{% else %}<tr><td class="text-muted">No complaints.</td></tr>{% endfor %}</tbody></table></div></div><div class="col-lg-5"><div class="card p-3"><h2 class="h5">Recent Users</h2><table class="table"><tbody>{% for user in recent_users %}<tr><td>{{ user.full_name }}</td><td>{{ user.role|title }}</td><td>{{ user.created_at.strftime('%d %b %Y') }}</td></tr>{% else %}<tr><td class="text-muted">No users.</td></tr>{% endfor %}</tbody></table></div></div></div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4 mb-4">
+  <div class="col">
+    <div class="card card-dashboard h-100 border-start border-primary border-4">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted text-uppercase mb-1" style="font-size: 0.75rem; letter-spacing: 0.5px;">Total Complaints</h6>
+            <h2 class="mb-0">{{ total_complaints }}</h2>
+          </div>
+          <div class="bg-primary bg-opacity-10 p-3 rounded">
+            <i class="bi bi-list-check text-primary fs-4"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card card-dashboard h-100 border-start border-warning border-4">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted text-uppercase mb-1" style="font-size: 0.75rem; letter-spacing: 0.5px;">Pending Action</h6>
+            <h2 class="mb-0">{{ pending_complaints }}</h2>
+          </div>
+          <div class="bg-warning bg-opacity-10 p-3 rounded">
+            <i class="bi bi-hourglass text-warning fs-4"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card card-dashboard h-100 border-start border-success border-4">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted text-uppercase mb-1" style="font-size: 0.75rem; letter-spacing: 0.5px;">Resolved</h6>
+            <h2 class="mb-0">{{ resolved_complaints }}</h2>
+          </div>
+          <div class="bg-success bg-opacity-10 p-3 rounded">
+            <i class="bi bi-check-circle text-success fs-4"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card card-dashboard h-100 border-start border-danger border-4">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted text-uppercase mb-1" style="font-size: 0.75rem; letter-spacing: 0.5px;">Escalated</h6>
+            <h2 class="mb-0">{{ escalated_complaints }}</h2>
+          </div>
+          <div class="bg-danger bg-opacity-10 p-3 rounded">
+            <i class="bi bi-exclamation-triangle text-danger fs-4"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card card-dashboard h-100">
+      <div class="card-header bg-white border-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Recent Complaints</h5>
+      </div>
+      <div class="card-body p-0 mt-3">
+        <div class="table-responsive">
+          <table class="table table-modern mb-0">
+            <thead>
+              <tr>
+                <th>Complaint No.</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for complaint in recent_complaints %}
+              <tr>
+                <td><strong>{{ complaint.complaint_number }}</strong></td>
+                <td>{{ complaint.title | truncate(35) }}</td>
+                <td>{{ ui.status_badge(complaint.status) }}</td>
+                <td>{{ ui.priority_badge(complaint.priority) }}</td>
+                <td>
+                  <a href="{{ url_for('admin.view_complaint', complaint_id=complaint.complaint_id) }}" class="btn btn-sm btn-light">View</a>
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="5" class="text-center py-4 text-muted">
+                  <i class="bi bi-inbox fs-2 d-block mb-2 text-light"></i>
+                  No recent complaints found.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card card-dashboard h-100">
+      <div class="card-header bg-white border-0 pt-4 pb-0">
+        <h5 class="card-title mb-0">System Activity</h5>
+      </div>
+      <div class="card-body">
+        <div class="mb-4">
+          <h6 class="text-muted text-uppercase mb-3" style="font-size: 0.75rem; letter-spacing: 0.5px;">User Base</h6>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Citizens</span>
+            <strong>{{ total_citizens }}</strong>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Officers</span>
+            <strong>{{ total_officers }}</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span>System Admins</span>
+            <strong>{{ total_users - total_citizens - total_officers }}</strong>
+          </div>
+        </div>
+        
+        <h6 class="text-muted text-uppercase mb-3" style="font-size: 0.75rem; letter-spacing: 0.5px;">Newest Users</h6>
+        <div class="list-group list-group-flush">
+          {% for user in recent_users %}
+          <div class="list-group-item px-0 border-0 py-2 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <div class="avatar bg-light text-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                <i class="bi bi-person"></i>
+              </div>
+              <div>
+                <div class="mb-0 fw-medium lh-sm" style="font-size: 0.875rem;">{{ user.full_name }}</div>
+                <small class="text-muted" style="font-size: 0.75rem;">{{ user.role|title }}</small>
+              </div>
+            </div>
+            <small class="text-muted" style="font-size: 0.75rem;">{{ user.created_at|date }}</small>
+          </div>
+          {% else %}
+          <div class="text-muted small">No recent users.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

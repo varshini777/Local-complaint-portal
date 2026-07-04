@@ -30,11 +30,11 @@
     <nav class="sidebar-nav">
       {% block sidebar_nav %}
         {% if current_user.is_authenticated %}
-          {% if current_user.role == 'Citizen' %}
+          {% if current_user.role == 'citizen' %}
             {% include "components/sidebar_citizen.html" %}
-          {% elif current_user.role == 'Officer' %}
+          {% elif current_user.role == 'officer' %}
             {% include "components/sidebar_officer.html" %}
-          {% elif current_user.role == 'Admin' %}
+          {% elif current_user.role == 'admin' %}
             {% include "components/sidebar_admin.html" %}
           {% endif %}
         {% endif %}
@@ -69,7 +69,23 @@
       </button>
 
       <div class="topbar-breadcrumb">
-        {% block breadcrumb %}{% endblock %}
+        {% block breadcrumb %}
+          {% set path_parts = request.path.strip('/').split('/') %}
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="{{ url_for(current_user.role|lower + '.dashboard') if current_user.is_authenticated else url_for('index') }}">Home</a></li>
+              {% for part in path_parts %}
+                {% if part != current_user.role|lower %}
+                  {% if loop.last %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ part | replace('_', ' ') | replace('-', ' ') | title }}</li>
+                  {% else %}
+                    <li class="breadcrumb-item text-muted">{{ part | replace('_', ' ') | replace('-', ' ') | title }}</li>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            </ol>
+          </nav>
+        {% endblock %}
       </div>
 
       <div class="topbar-actions">

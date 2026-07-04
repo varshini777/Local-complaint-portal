@@ -1,4 +1,4 @@
-<a href="{{ url_for('index') }}"><i class="bi bi-house"></i>Home</a>
-<a href="{{ url_for('officer.dashboard') }}"><i class="bi bi-speedometer2"></i>Dashboard</a>
-<a href="{{ url_for('officer.assigned_complaints') }}"><i class="bi bi-clipboard-check"></i>Assigned Complaints</a>
-<a href="{{ url_for('officer.profile') }}"><i class="bi bi-person"></i>Profile</a>
+<a href="{{ url_for('index') }}" class="sidebar-link {{ 'active' if request.endpoint == 'index' else '' }}"><i class="bi bi-house"></i>Home</a>
+<a href="{{ url_for('officer.dashboard') }}" class="sidebar-link {{ 'active' if request.endpoint == 'officer.dashboard' else '' }}"><i class="bi bi-speedometer2"></i>Dashboard</a>
+<a href="{{ url_for('officer.assigned_complaints') }}" class="sidebar-link {{ 'active' if request.endpoint == 'officer.assigned_complaints' else '' }}"><i class="bi bi-clipboard-check"></i>Assigned Complaints</a>
+<a href="{{ url_for('officer.profile') }}" class="sidebar-link {{ 'active' if request.endpoint == 'officer.profile' else '' }}"><i class="bi bi-person"></i>Profile</a>
