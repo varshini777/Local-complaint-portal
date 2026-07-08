@@ -1,0 +1,9 @@
+category_id,category_name,description,is_active,created_at,updated_at
+1,Road Damage,Road Damage related complaints.,1,2026-05-31 15:21:17.238470,2026-05-31 15:21:17.238480
+2,Garbage,Garbage related complaints.,1,2026-05-31 15:21:17.242912,2026-05-31 15:21:17.242918
+3,Drainage,Drainage related complaints.,1,2026-05-31 15:21:17.244403,2026-05-31 15:21:17.244409
+4,Water Leakage,Water Leakage related complaints.,1,2026-05-31 15:21:17.245727,2026-05-31 15:21:17.245732
+5,Streetlight,Streetlight related complaints.,1,2026-05-31 15:21:17.246946,2026-05-31 15:21:17.246951
+6,Electricity,Electricity related complaints.,1,2026-05-31 15:21:17.248302,2026-05-31 15:21:17.248307
+7,Public Safety,Public Safety related complaints.,1,2026-05-31 15:21:17.250124,2026-05-31 15:21:17.250132
+8,Others,Others related complaints.,1,2026-05-31 15:21:17.251831,2026-05-31 15:21:17.251836

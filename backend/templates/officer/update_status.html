@@ -1,5 +1,5 @@
 {% extends "base_dashboard.html" %}
-{% from "components/macros.html" import form_field, empty_state, table_header with context %}
+{% from "components/macros.html" import form_field, empty_state, table_header, status_badge, priority_badge, escalation_badge with context %}
 {% block title %}Update Complaint - {{ complaint.complaint_number }}{% endblock %}
 {% block content %}
 <div class="page-header mb-4 d-flex justify-content-between align-items-center">
@@ -13,21 +13,41 @@
       <form autocomplete="off" method="post" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <div class="row g-3">
+          {% if 'status' in form %}
           <div class="col-md-6">
             {{ form_field(form.status, is_floating=false) }}
           </div>
+          {% endif %}
+          {% if 'remarks' in form %}
+          <div class="col-12">
+            {{ form_field(form.remarks, is_floating=false) }}
+          </div>
+          {% endif %}
+          {% if 'after_image' in form %}
           <div class="col-md-6">
             {{ form_field(form.after_image, is_floating=false) }}
           </div>
+          {% endif %}
+          {% if 'resolution_notes' in form %}
           <div class="col-12">
             {{ form_field(form.resolution_notes, is_floating=false) }}
           </div>
+          {% endif %}
+          {% if 'work_performed' in form %}
           <div class="col-md-6">
             {{ form_field(form.work_performed, is_floating=false) }}
           </div>
+          {% endif %}
+          {% if 'materials_used' in form %}
           <div class="col-md-6">
             {{ form_field(form.materials_used, is_floating=false) }}
           </div>
+          {% endif %}
+          {% if 'additional_remarks' in form %}
+          <div class="col-12">
+            {{ form_field(form.additional_remarks, is_floating=false) }}
+          </div>
+          {% endif %}
         </div>
         <div class="mt-4 pt-3 border-top">
           {{ form.submit(class="btn btn-primary px-4") }}

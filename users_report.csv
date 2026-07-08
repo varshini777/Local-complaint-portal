@@ -1,0 +1,8 @@
+user_id,full_name,email,password_hash,phone,role,security_question,security_answer_hash,is_active,created_at,updated_at
+1,Default Admin,admin@localportal.com,$2b$12$JOyVFcJbByUIwq0MW1FMtegyPqTl2bKCRkYY2QZISEO1kie2AR/YK,9999999999,admin,What is your default seed account code?,$2b$12$bLYz3/9WI9bOveKY/D.Hd.5j/7Bqc8nxfqIVLClXW6pJ4OCXfGUPW,1,2026-05-31 15:21:15.912357,2026-05-31 15:21:15.912367
+2,Main officer,officer@localportal.com,$2b$12$5sNJaUQIb7JOMiiRVcYYOeRnCKt2jpoZ2UMWFPvjOH2lN6edteGqi,8888888889,officer,What is your default seed account code?,$2b$12$9Rsj7t5zV8Lj6.u0nO3qIe9oAoJbbHvcH/PjR9u8x7YdxcyBeA0du,1,2026-05-31 15:21:17.229861,2026-05-31 17:53:57.805075
+3,varshini,varshini20051304@gmail.com,$2b$12$NQ2uOT3uvKfdHkFj5h3CAeIOLXorWhd9jkM4/Z7iPHr5nhRygkSq.,8660350146,citizen,what is my name?,$2b$12$AibYO6kIS33j2juf9DdlQuR7gasQWBzaQuC8prlEqQ9RXI4vONVza,1,2026-05-31 15:24:49.862014,2026-05-31 15:24:49.862030
+4,John,john@gmail.com,$2b$12$LJi500KPIn4GX/IwabA5PeM4aG2Wy1jGM.e/jnCFyXilv1CrFhx5K,7859603850,citizen,what is my name?,$2b$12$.2iEwI3bnpH2pdmGzr9Yqe8zCbzdS9LxWdJkf.zgX97UOsjsZnovG,1,2026-05-31 15:30:53.393645,2026-05-31 15:30:53.393661
+5,Mahesh,mahesh@gmail.com,$2b$12$WLXOs/WjwGwzy3k8XcfPquK0UDc4.weSavLjgSyh/ww2KHNyiXUUu,8888888888,officer,,,1,2026-05-31 17:49:51.044838,2026-06-07 15:22:52.665661
+6,Raju,raju@gmail.com,$2b$12$11JUCAa3.wbS6kJgX.paM.jqlK9qMMBxnAvRWGxXAZiAayblchm.u,9565647562,citizen,what is my name?,$2b$12$KUZVoir5X7fv44ZCuWQNpOxCT0CKHT82PYzFXULUhvzEnhe9b86C2,1,2026-05-31 17:58:14.805476,2026-05-31 17:58:14.805484
+7,karan,karan@gmail.com,$2b$12$iNOkCrI7nv9YHKdzTibsWu4lqix.pxySE9AVQ5wULaARUOl8t2hAa,7859603845,officer,,,1,2026-06-08 02:59:58.968131,2026-06-08 03:05:21.886219

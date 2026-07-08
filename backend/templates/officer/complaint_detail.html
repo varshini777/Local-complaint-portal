@@ -8,7 +8,16 @@
   </div>
   <div><a class="btn btn-outline-primary" href="{{ url_for('officer.update_status', complaint_id=complaint.complaint_id) }}">Update Status</a> <a class="btn btn-primary" href="{{ url_for('officer.resolve_complaint', complaint_id=complaint.complaint_id) }}">Resolve</a></div>
 </div>
-<div class="row g-3"><div class="col-lg-8"><div class="card p-3"><h2 class="h5">{{ complaint.title }}</h2><p>{{ complaint.description }}</p><dl class="row"><dt class="col-sm-3">Registered On</dt><dd class="col-sm-9">{{ complaint.submitted_at|datetime }}</dd><dt class="col-sm-3">Citizen</dt><dd class="col-sm-9">{{ citizen.full_name }} | {{ citizen.phone }}</dd><dt class="col-sm-3">Category</dt><dd class="col-sm-9">{{ complaint.category.category_name }}</dd><dt class="col-sm-3">Ward</dt><dd class="col-sm-9">{{ complaint.ward.display_name }}</dd><dt class="col-sm-3">Priority</dt><dd class="col-sm-9">{{ complaint.priority }}</dd></dl>{% if complaint.has_before_image %}<img class="complaint-image mb-3" src="{{ url_for('static', filename=complaint.before_image_path) }}">{% endif %}{% if complaint.has_after_image %}<img class="complaint-image" src="{{ url_for('static', filename=complaint.after_image_path) }}">{% endif %}</div></div><div class="col-lg-4">
+<div class="row g-3"><div class="col-lg-8"><div class="card p-3"><h2 class="h5">{{ complaint.title }}</h2><p>{{ complaint.description }}</p><dl class="row"><dt class="col-sm-3">Registered On</dt><dd class="col-sm-9">{{ complaint.submitted_at|datetime }}</dd><dt class="col-sm-3">Citizen</dt><dd class="col-sm-9">{{ citizen.full_name }} | {{ citizen.phone }}</dd><dt class="col-sm-3">Category</dt><dd class="col-sm-9">{{ complaint.category.category_name }}</dd><dt class="col-sm-3">Ward</dt><dd class="col-sm-9">{{ complaint.ward.display_name }}</dd><dt class="col-sm-3">Priority</dt><dd class="col-sm-9">{{ complaint.priority }}</dd></dl>{% if complaint.has_before_image %}<img class="complaint-image mb-3" src="{{ url_for('static', filename=complaint.before_image_path) }}">{% endif %}{% if complaint.has_after_image %}<img class="complaint-image" src="{{ url_for('static', filename=complaint.after_image_path) }}">{% endif %}
+    {% if complaint.feedback %}
+      {% set fb = complaint.feedback[0] if complaint.feedback is iterable else complaint.feedback %}
+      <h3 class="h6 mt-4 border-top pt-3">Citizen Feedback</h3>
+      <div class="d-flex align-items-center mb-2">
+        <span class="badge bg-success me-2">Rating: {{ fb.rating }}/5</span>
+      </div>
+      <p class="fst-italic">"{{ fb.comment }}"</p>
+    {% endif %}
+</div></div><div class="col-lg-4">
     {% include "components/timeline.html" %}
 </div></div>
 {% endblock %}

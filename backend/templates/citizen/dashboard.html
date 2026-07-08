@@ -44,7 +44,7 @@
             <td><span class="badge bg-warning text-dark">{{ complaint.days_since_submitted }} days</span></td>
             <td>
               <a href="{{ url_for('citizen.complaint_detail', complaint_id=complaint.complaint_id) }}" class="btn btn-sm btn-outline-warning">Review</a>
-              <a href="{{ url_for('citizen.submit_complaint') }}" class="btn btn-sm btn-warning">File Again</a>
+              <a href="{{ url_for('citizen.refile_complaint', complaint_id=complaint.complaint_id) }}" class="btn btn-sm btn-warning">File Again</a>
             </td>
           </tr>
           {% endfor %}

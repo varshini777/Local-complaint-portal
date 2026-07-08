@@ -10,10 +10,7 @@ class ComplaintStatusForm(FlaskForm):
     status = SelectField(
         "Status",
         choices=[
-            (Complaint.STATUS_SUBMITTED, Complaint.STATUS_SUBMITTED),
-            (Complaint.STATUS_ASSIGNED, Complaint.STATUS_ASSIGNED),
             (Complaint.STATUS_IN_PROGRESS, Complaint.STATUS_IN_PROGRESS),
-            (Complaint.STATUS_RESOLVED, Complaint.STATUS_RESOLVED),
             (Complaint.STATUS_CLOSED, Complaint.STATUS_CLOSED),
         ],
         validators=[DataRequired()],
@@ -32,15 +29,15 @@ class ComplaintResolutionForm(FlaskForm):
     )
     work_performed = TextAreaField(
         "Work Performed",
-        validators=[Optional(), Length(max=5000)],
+        validators=[DataRequired(), Length(max=5000)],
     )
     materials_used = TextAreaField(
         "Materials Used",
-        validators=[Optional(), Length(max=2000)],
+        validators=[DataRequired(), Length(max=2000)],
     )
     additional_remarks = TextAreaField(
         "Additional Remarks",
-        validators=[Optional(), Length(max=2000)],
+        validators=[DataRequired(), Length(max=2000)],
     )
     after_image = FileField(
         "After Image",

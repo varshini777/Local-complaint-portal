@@ -25,6 +25,25 @@
     {% if complaint.has_before_image %}<h3 class="h6">Before Image</h3><img class="complaint-image mb-3" src="{{ url_for('static', filename=complaint.before_image_path) }}">{% endif %}
     {% if complaint.has_after_image %}<h3 class="h6">After Image</h3><img class="complaint-image mb-3" src="{{ url_for('static', filename=complaint.after_image_path) }}">{% endif %}
     {% if complaint.has_resolution %}<h3 class="h6">Resolution</h3><p>{{ complaint.resolution_notes or '' }}</p><p>{{ complaint.work_performed or '' }}</p><p>{{ complaint.materials_used or '' }}</p><p>{{ complaint.additional_remarks or '' }}</p>{% endif %}
+
+    {% if complaint.feedback %}
+      {% set fb = complaint.feedback[0] if complaint.feedback is iterable else complaint.feedback %}
+      {% if fb %}
+      <h3 class="h6 mt-4 border-top pt-3">Your Feedback</h3>
+      <div class="d-flex align-items-center mb-2">
+        <span class="badge bg-success me-2">Rating: {{ fb.rating }}/5</span>
+        <span class="text-muted small">{{ fb.created_at|datetime if fb.created_at else '' }}</span>
+      </div>
+      <p class="fst-italic">"{{ fb.comment }}"</p>
+      {% endif %}
+    {% elif complaint.status in ['Resolved', 'Closed'] %}
+      <div class="mt-4 border-top pt-3">
+        <a href="{{ url_for('citizen.submit_feedback', complaint_id=complaint.complaint_id) }}" class="btn btn-primary">
+          <i class="bi bi-star-fill"></i> Provide Feedback
+        </a>
+      </div>
+    {% endif %}
+
   </div></div>
   <div class="col-lg-4">
     {% include "components/timeline.html" %}

@@ -46,10 +46,10 @@ class RegistrationForm(FlaskForm):
         "Phone",
         validators=[
             DataRequired(),
-            Length(min=7, max=20),
+            Length(min=10, max=10, message="Phone number must be exactly 10 digits."),
             Regexp(
-                r"^[0-9+\-\s()]+$",
-                message="Phone number may contain digits, spaces, +, -, and parentheses.",
+                r"^\d{10}$",
+                message="Phone number must contain exactly 10 digits.",
             ),
         ],
     )

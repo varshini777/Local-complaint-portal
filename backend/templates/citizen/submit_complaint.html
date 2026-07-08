@@ -1,11 +1,17 @@
 {% extends "base_dashboard.html" %}
-{% from "components/macros.html" import form_field, empty_state, table_header with context %}
-{% block title %}Submit Complaint{% endblock %}
+{% from "components/macros.html" import form_field, empty_state, table_header, status_badge, priority_badge, escalation_badge with context %}
+{% block title %}{% if is_refile %}Refile Complaint{% else %}Submit Complaint{% endif %}{% endblock %}
 {% block content %}
 <div class="page-header mb-4 d-flex justify-content-between align-items-center">
-  <h1 class="h3 mb-0">Submit Complaint</h1>
+  <h1 class="h3 mb-0">{% if is_refile %}Refile Complaint{% else %}Submit Complaint{% endif %}</h1>
   <a href="{{ url_for('citizen.complaint_history') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> My Complaints</a>
 </div>
+{% if is_refile %}
+<div class="alert alert-info border-info border-opacity-50 shadow-sm d-flex align-items-center" role="alert">
+  <i class="bi bi-info-circle-fill fs-4 me-3 text-info"></i>
+  <div>This complaint has been pre-filled from your previous complaint. Review the details, upload new images if necessary, and submit to create a new complaint.</div>
+</div>
+{% endif %}
 <div class="row">
   <div class="col-lg-8">
     <div class="card p-4 shadow-sm border-0">
@@ -19,10 +25,10 @@
             {{ form_field(form.description, is_floating=false) }}
           </div>
           <div class="col-md-6">
-            {{ form_field(form.category_id, is_floating=false) }}
+            {{ form_field(form.category, is_floating=false) }}
           </div>
           <div class="col-md-6">
-            {{ form_field(form.ward_id, is_floating=false) }}
+            {{ form_field(form.ward, is_floating=false) }}
           </div>
           <div class="col-md-6">
             {{ form_field(form.priority, is_floating=false) }}

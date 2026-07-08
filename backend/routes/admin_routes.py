@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from backend.extensions import db
 from backend.models import ActivityLog, Complaint, SystemSetting, User, Ward, Notification, ComplaintUpdate
 from backend.services.activity_log_service import log_activity
+from backend.services.escalation_service import escalate_all_pending_complaints
 from backend.services.notification_service import (
     create_complaint_assigned_notification,
     create_complaint_closed_notification,
@@ -39,13 +40,14 @@ def get_or_404(model, object_id):
 @admin_bp.route("/dashboard")
 @admin_required
 def dashboard():
+    escalate_all_pending_complaints()
     total_users = User.query.count()
     total_citizens = User.query.filter_by(role=User.ROLE_CITIZEN).count()
     total_officers = User.query.filter_by(role=User.ROLE_OFFICER).count()
     
     total_complaints = Complaint.query.count()
     pending_complaints = Complaint.query.filter(Complaint.status.in_([Complaint.STATUS_SUBMITTED, Complaint.STATUS_ASSIGNED, Complaint.STATUS_IN_PROGRESS])).count()
-    resolved_complaints = Complaint.query.filter_by(status=Complaint.STATUS_RESOLVED).count()
+    resolved_complaints = Complaint.query.filter(Complaint.status.in_([Complaint.STATUS_RESOLVED, Complaint.STATUS_CLOSED])).count()
     closed_complaints = Complaint.query.filter_by(status=Complaint.STATUS_CLOSED).count()
     escalated_complaints = Complaint.query.filter(Complaint.escalation_level.in_([Complaint.ESCALATION_URGENT, Complaint.ESCALATION_CRITICAL])).count()
 
@@ -338,6 +340,10 @@ def view_complaint(complaint_id):
 @admin_required
 def assign_complaint(complaint_id):
     complaint = get_or_404(Complaint, complaint_id)
+    if complaint.assigned_officer_id is not None:
+        flash("This complaint is already assigned to an officer and cannot be reassigned.", "warning")
+        return redirect(url_for("admin.view_complaint", complaint_id=complaint.complaint_id))
+        
     form = AdminComplaintAssignForm()
     
     if form.validate_on_submit():

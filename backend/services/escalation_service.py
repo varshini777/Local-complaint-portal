@@ -41,7 +41,10 @@ def check_escalation_required(complaint):
     if not complaint.submitted_at:
         return None
     
-    days_since_submission = (datetime.now(timezone.utc) - complaint.submitted_at).days
+    now_utc = datetime.now(timezone.utc)
+    if complaint.submitted_at.tzinfo is None:
+        now_utc = now_utc.replace(tzinfo=None)
+    days_since_submission = (now_utc - complaint.submitted_at).days
     
     if days_since_submission >= critical_days:
         return Complaint.ESCALATION_CRITICAL
@@ -106,7 +109,7 @@ def escalate_all_pending_complaints():
     to_critical = 0
     
     for complaint in pending_complaints:
-        was_escalated, new_level = check_and_escalation_complaint(complaint)
+        was_escalated, new_level = check_and_escalate_complaint(complaint)
         if was_escalated:
             escalated_count += 1
             if new_level == Complaint.ESCALATION_URGENT:

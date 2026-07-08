@@ -14,6 +14,12 @@ from wtforms.validators import DataRequired, Email, Length, NumberRange, Optiona
 from backend.models import User, Ward, Complaint, ComplaintCategory
 
 
+from backend.forms.auth_forms import validate_password_strength
+
+def optional_password_strength(form, field):
+    if field.data:
+        validate_password_strength(form, field)
+
 class AdminUserSearchForm(FlaskForm):
     search_term = StringField("Search", validators=[Optional(), Length(max=100)])
     role = SelectField(
@@ -43,17 +49,17 @@ class AdminOfficerForm(FlaskForm):
     phone = StringField(
         "Phone Number",
         validators=[
-            Optional(),
-            Length(min=7, max=20),
+            DataRequired(),
+            Length(min=10, max=10, message="Phone number must be exactly 10 digits."),
             Regexp(
-                r"^[0-9+\-\s()]+$",
-                message="Phone number may contain digits, spaces, +, -, and parentheses.",
+                r"^\d{10}$",
+                message="Phone number must contain exactly 10 digits.",
             ),
         ],
     )
     password = PasswordField(
         "Password (leave blank to keep current if editing)",
-        validators=[Optional(), Length(min=8, max=72)],
+        validators=[Optional(), Length(min=8, max=72), optional_password_strength],
     )
     is_active = BooleanField("Active", default=True)
     submit = SubmitField("Save Officer")
